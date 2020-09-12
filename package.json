@@ -1,41 +1,44 @@
 {
-  "name": "--libraryname--",
+  "name": "--projectname--",
   "version": "0.0.0-semantically-released",
   "description": "",
   "keywords": [],
-  "homepage": "https://github.com/--username--/--libraryname--#readme",
+  "homepage": "https://github.com/--username--/--projectname--#readme",
   "bugs": {
-    "url": "https://github.com/--username--/--libraryname--/issues"
+    "url": "https://github.com/--username--/--projectname--/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://--username--@github.com/--username--/--libraryname--.git"
+    "url": "git+https://--username--@github.com/--username--/--projectname--.git"
   },
   "license": "MIT",
-  "author": "--userfull-- <--usermail-->",
+  "author": "--userfull-- <--useremail-->",
   "main": "",
   "scripts": {
+    "postinstall": "node tools/init",
     "lint": "eslint --fix . --ext .js --max-warnings 0",
     "test": "jest --coverage",
-    "test:watch": "jest --watchAll",
     "test:prod": "yarn run lint && yarn run test -- --no-cache",
-    "postinstall": "node tools/init"
-  },
-  "devDependencies": {
-    "eslint": "^7.9.0",
-    "eslint-config-thedaviddias": "0.0.2",
-    "husky": "^4.3.0",
-    "jest": "^26.4.2",
-    "prettier": "^2.1.1",
-    "pretty-quick": "^3.0.2",
-    "prompt": "^1.0.0",
-    "replace-in-file": "^6.1.0",
-    "shelljs": "^0.8.4"
+    "test:watch": "jest --watchAll"
   },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "dependencies": {
+    "colors": "^1.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "eslint-config-thedaviddias": "0.0.2",
+    "husky": "^4.3.0",
+    "inquirer": "^7.3.3",
+    "jest": "^26.4.2",
+    "prettier": "^2.1.1",
+    "pretty-quick": "^3.0.2",
+    "replace-in-file": "^6.1.0",
+    "shelljs": "^0.8.4"
   },
   "engines": {
     "node": ">=12.10",

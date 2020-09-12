@@ -1,7 +1,7 @@
 /**
  * This script runs automatically after your first npm / yarn install.
  */
-const _prompt = require("prompt")
+const inquirer = require('inquirer')
 const {
   mv,
   rm,
@@ -24,8 +24,10 @@ const rmDirs = [
   // ".git"
 ]
 const rmFiles = [
-  "tools/init.js"
+  "tools"
 ]
+
+const renameFiles = []
 
 const modifyFiles = [
   "LICENSE",
@@ -34,124 +36,61 @@ const modifyFiles = [
   ".github/.dependabot.yml"
 ]
 
-const _promptUsernameName = {
-  properties: {
-    library: {
-      description: colors.cyan(
-        "What is your Github username? (use kebab-case)"
-      ),
-      pattern: /^[a-z]+(\-[a-z]+)*$/,
-      type: "string",
-      required: true,
-      message: '"kebab-case" uses lowercase letters, and hyphens for any punctuation'
-    }
-  }
-}
+var questions = [
+  {
+    type: 'confirm',
+    name: 'projectname',
+    message: 'Would you like it to be called "' + libraryNameSuggested(),
+  },
+  {
+    type: 'input',
+    name: 'reponame',
+    message: "What do you want the project to be called? (use kebab-case)",
+    validate: function (value) {
+      var pass = value.match(
+        /^[a-z]+(\-[a-z]+)*$/i
+      );
+      if (pass) {
+        return true;
+      }
 
-const _promptSchemaLibraryName = {
-  properties: {
-    library: {
-      description: colors.cyan(
-        "What do you want the project to be called? (use kebab-case)"
-      ),
-      pattern: /^[a-z]+(\-[a-z]+)*$/,
-      type: "string",
-      required: true,
-      message: '"kebab-case" uses lowercase letters, and hyphens for any punctuation'
-    }
-  }
-}
+      return 'kebab-case" uses lowercase letters, and hyphens for any punctuation';
+    },
+    when: function (answers) {
+      return !answers.projectname;
+    },
+  },
+  {
+    type: 'input',
+    name: 'username',
+    message: "What is your Github username? (use kebab-case)",
+    validate: function (value) {
+      var pass = value.match(
+        /^[a-z]+(\-[a-z]+)*$/i
+      );
+      if (pass) {
+        return true;
+      }
 
-const _promptSchemaLibrarySuggest = {
-  properties: {
-    useSuggestedName: {
-      description: colors.cyan(
-        'Would you like it to be called "' +
-        libraryNameSuggested() +
-        '"? [Yes/No]'
-      ),
-      pattern: /^(y(es)?|n(o)?)$/i,
-      type: "string",
-      required: true,
-      message: 'You need to type "Yes" or "No" to continue...'
-    }
-  }
-}
+      return 'kebab-case" uses lowercase letters, and hyphens for any punctuation';
+    },
+  },
 
-_prompt.start()
-_prompt.message = ""
+]
 
-// Clear console
-process.stdout.write('\x1B[2J\x1B[0f');
-
-if (!which("git")) {
-  console.log(colors.red("Sorry, this script requires git"))
-  removeItems()
-  process.exit(1)
-}
-
-// Say hi!
-console.log(
-  colors.cyan("Hi! You're almost ready to start with your new project.")
-)
-
-// Generate the library name and start the tasks
-if (process.env.CI == null) {
-  if (!libraryNameSuggestedIsDefault()) {
-    libraryNameSuggestedAccept()
-  } else {
-    libraryNameCreate()
-  }
-} else {
-  // This is being run in a CI environment, so don't ask any questions
-  setupLibrary(libraryNameSuggested(), nameCreate())
-}
-
-/**
- * Asks the user for the name of the library if it has been cloned into the
- * default directory, or if they want a different name to the one suggested
- */
-function libraryNameCreate() {
-  _prompt.get(_promptSchemaLibraryName, (err, res) => {
-    if (err) {
+inquirer
+  .prompt(questions)
+  .then(answers => {
+    const projectname = answers.projectname ? libraryNameSuggested() : answers.reponame
+    setupLibrary(projectname, answers.username)
+  })
+  .catch(error => {
+    if (error) {
       console.log(colors.red("Sorry, there was an error building the workspace :("))
       removeItems()
       process.exit(1)
     }
-
-    setupLibrary(res.library)
   })
-}
-
-function nameCreate() {
-  _prompt.get(_promptUsernameName, (err, res) => {
-    if (err) {
-      console.log(colors.red("Sorry, but we need your Github username to proceed."))
-      process.exit(1)
-    }
-
-    return res
-  })
-}
-
-/**
- * Sees if the users wants to accept the suggested library name if the project
- * has been cloned into a custom directory (i.e. it's not 'Basic-Project-Template')
- */
-function libraryNameSuggestedAccept() {
-  _prompt.get(_promptSchemaLibrarySuggest, (err, res) => {
-    if (err) {
-      console.log(colors.red("Sorry, you'll need to type the project name"))
-      libraryNameCreate()
-    }
-
-    if (res.useSuggestedName.toLowerCase().charAt(0) === "y") {
-      setupLibrary(libraryNameSuggested())
-    } else {
-      libraryNameCreate()
-    }
-  })
-}
 
 /**
  * The library name is suggested by looking at the directory name of the
@@ -171,22 +110,11 @@ function libraryNameSuggested() {
 }
 
 /**
- * Checks if the suggested library name is the default, which is 'typescript-library-starter'
- */
-function libraryNameSuggestedIsDefault() {
-  if (libraryNameSuggested() === "Basic-Project-Template") {
-    return true
-  }
-
-  return false
-}
-
-/**
- * Calls all of the functions needed to setup the library
+ * Calls all of the functions needed to setup the repo
  *
- * @param libraryName
+ * @param projectName
  */
-function setupLibrary(libraryName, username) {
+function setupLibrary(projectName, username) {
   console.log(
     colors.cyan(
       "\nThanks for the info. The last few changes are being made... hang tight!\n\n"
@@ -195,13 +123,13 @@ function setupLibrary(libraryName, username) {
 
   // Get the Git username and email before the .git directory is removed
   let userfull = exec("git config user.name").stdout.trim()
-  let usermail = exec("git config user.email").stdout.trim()
+  let useremail = exec("git config user.email").stdout.trim()
 
   removeItems()
 
-  modifyContents(libraryName, userfull, username, usermail)
+  modifyContents(projectName, userfull, username, useremail)
 
-  renameItems(libraryName)
+  renameItems(projectName)
 
   finalize()
 
@@ -226,19 +154,19 @@ function removeItems() {
 /**
  * Updates the contents of the template files with the library name or user details
  *
- * @param libraryName
+ * @param projectName
  * @param username
- * @param usermail
+ * @param useremail
  */
-function modifyContents(libraryName, userfull, username, usermail) {
+function modifyContents(projectName, userfull, username, useremail) {
   console.log(colors.underline.white("Modified"))
 
   let files = modifyFiles.map(f => path.resolve(__dirname, "..", f))
   try {
     const changes = replace.sync({
       files,
-      from: [/--libraryname--/g, /--userfull--/g, /--username--/g, /--usermail--/g],
-      to: [libraryName, userfull, username, usermail]
+      from: [/--projectname--/g, /--userfull--/g, /--username--/g, /--useremail--/g],
+      to: [projectName, userfull, username, useremail]
     })
     console.log(colors.yellow(modifyFiles.join("\n")))
   } catch (error) {
@@ -249,17 +177,17 @@ function modifyContents(libraryName, userfull, username, usermail) {
 }
 
 /**
- * Renames any template files to the new library name
+ * Renames any template files to the new project name
  *
- * @param libraryName
+ * @param projectName
  */
-function renameItems(libraryName) {
+function renameItems(projectName) {
   console.log(colors.underline.white("Renamed"))
 
   renameFiles.forEach(function (files) {
     // Files[0] is the current filename
     // Files[1] is the new name
-    let newFilename = files[1].replace(/--libraryname--/g, libraryName)
+    let newFilename = files[1].replace(/--projectname--/g, projectName)
     mv(
       path.resolve(__dirname, "..", files[0]),
       path.resolve(__dirname, "..", newFilename)
@@ -285,6 +213,8 @@ function finalize() {
   // Remove post-install command
   let jsonPackage = path.resolve(__dirname, "..", "package.json")
   const pkg = JSON.parse(readFileSync(jsonPackage))
+
+  console.log('pkg', pkg)
 
   // Note: Add items to remove from the package file here
   delete pkg.scripts.postinstall
