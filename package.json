@@ -1,23 +1,25 @@
 {
-  "name": "basic-project-template",
+  "name": "--libraryname--",
   "version": "0.0.0-semantically-released",
   "description": "",
   "keywords": [],
-  "homepage": "https://github.com/thedaviddias/basic-project-template#readme",
+  "homepage": "https://github.com/--username--/--libraryname--#readme",
   "bugs": {
-    "url": "https://github.com/thedaviddias/basic-project-template/issues"
+    "url": "https://github.com/--username--/--libraryname--/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://thedaviddias@github.com/thedaviddias/basic-project-template.git"
+    "url": "git+https://--username--@github.com/--username--/--libraryname--.git"
   },
   "license": "MIT",
-  "author": "David Dias <thedaviddias@gmail.com> (https://thedaviddias.dev)",
+  "author": "--userfull-- <--usermail-->",
   "main": "",
   "scripts": {
     "lint": "eslint --fix . --ext .js --max-warnings 0",
-    "test": "jest --watch",
-    "test:coverage": "yarn test --coverage --watchAll=false -w 1"
+    "test": "jest --coverage",
+    "test:watch": "jest --watchAll",
+    "test:prod": "yarn run lint && yarn run test -- --no-cache",
+    "postinstall": "node tools/init"
   },
   "devDependencies": {
     "eslint": "^7.9.0",
@@ -25,7 +27,10 @@
     "husky": "^4.3.0",
     "jest": "^26.4.2",
     "prettier": "^2.1.1",
-    "pretty-quick": "^3.0.2"
+    "pretty-quick": "^3.0.2",
+    "prompt": "^1.0.0",
+    "replace-in-file": "^6.1.0",
+    "shelljs": "^0.8.4"
   },
   "husky": {
     "hooks": {

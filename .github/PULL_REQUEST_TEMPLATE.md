@@ -1,14 +1,15 @@
-**Fixes**: #
+## Description
 
-**Please complete these steps and check these boxes (by putting an x inside the brackets) before filing your PR:**
+Provide a summary of what has been done or what this pull request does.
 
-- [ ] Check the commit's or even all commits' message styles matches our requested structure.
-- [ ] Check your code additions will fail neither code linting checks nor unit test.
+## Checklist
 
-#### Short description of what this resolves:
+All checkboxes must be checked before this PR can be reviewed.
 
-#### Proposed changes:
+- [ ] Have you tested your feature/bug for responsive layout?
+- [ ] Have you tested your feature/bug in multiple browsers/devices via BrowserStack?
+- [ ] Has this PR been pulled and tested by someone other than yourself?
 
-## -
+## Closes
 
--
+<!-- List issues that should be closed after merge -->

@@ -25,10 +25,14 @@
   ],
   "flagWords": [],
   "ignorePaths": [
+    "tools/init.js",
+    ".cspell.json",
     "package.json",
     "package-lock.json",
     "yarn.lock",
     "tsconfig.json",
-    "node_modules/**"
+    "node_modules/**",
+    ".github/**",
+    ".vscode"
   ]
 }
