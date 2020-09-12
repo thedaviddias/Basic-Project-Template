@@ -15,12 +15,22 @@
   "author": "David Dias <thedaviddias@gmail.com> (https://thedaviddias.dev)",
   "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --fix . --ext .js --max-warnings 0",
+    "test": "jest --watch",
+    "test:coverage": "yarn test --coverage --watchAll=false -w 1"
   },
   "devDependencies": {
+    "eslint": "^7.9.0",
     "eslint-config-thedaviddias": "0.0.2",
-    "husky": "4.2.5",
-    "pretty-quick": "2.0.1"
+    "husky": "^4.3.0",
+    "jest": "^26.4.2",
+    "prettier": "^2.1.1",
+    "pretty-quick": "^3.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "engines": {
     "node": ">=12.10",

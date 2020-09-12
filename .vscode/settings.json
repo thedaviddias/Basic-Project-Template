@@ -1,17 +1,23 @@
 {
   "editor.formatOnSave": true,
+  // turn it off for JS and JSX, we will do this via eslint
   "[javascript]": {
     "editor.formatOnSave": false
   },
   "[javascriptreact]": {
     "editor.formatOnSave": false
   },
+  // tell the ESLint plugin to run on save
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
   "prettier.disableLanguages": ["javascript", "javascriptreact"],
-  "files.exclude": {
+  "editor.formatOnPaste": true,
+  "workbench.editor.highlightModifiedTabs": true,
+  "search.exclude": {
     "**/.git": true,
-    "**/.DS_Store": true
-  }
+    "**/node_modules": true,
+    "**/yarn.lock": true,
+    "**/package.lock": true,
+  },
 }
