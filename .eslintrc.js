@@ -1,3 +1,6 @@
 module.exports = {
-  extends: ['thedaviddias']
+  extends: ['thedaviddias'],
+  env: {
+    "jest": true
+  }
 }

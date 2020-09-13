@@ -27,9 +27,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies and run tests
-        run: |
-          yarn install
-          yarn test
+        run: yarn install --frozen-lockfile --silent --ignore-engines --update-checksums --non-interactive
+
+      - name: Run lint
+        run: yarn lint
+
+      - name: Run tests
+        run: yarn test
 
       # add your build task
 

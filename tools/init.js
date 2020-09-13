@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * This script runs automatically after your first npm / yarn install.
  */
@@ -169,7 +170,7 @@ function modifyContents(projectName, userfull, username, useremail) {
 
   let files = modifyFiles.map(f => path.resolve(__dirname, "..", f))
   try {
-    const changes = replace.sync({
+    replace.sync({
       files,
       from: [/--repo--/g, /--userfull--/g, /--owner--/g, /--useremail--/g],
       to: [projectName, userfull, username, useremail]
