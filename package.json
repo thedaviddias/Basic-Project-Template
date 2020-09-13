@@ -1,20 +1,21 @@
 {
-  "name": "--projectname--",
+  "name": "--repo--",
   "version": "0.0.0-semantically-released",
   "description": "",
   "keywords": [],
-  "homepage": "https://github.com/--username--/--projectname--#readme",
+  "homepage": "https://github.com/--owner--/--repo--#readme",
   "bugs": {
-    "url": "https://github.com/--username--/--projectname--/issues"
+    "url": "https://github.com/--owner--/--repo--/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://--username--@github.com/--username--/--projectname--.git"
+    "url": "git+https://--owner--@github.com/--owner--/--repo--.git"
   },
   "license": "MIT",
   "author": "--userfull-- <--useremail-->",
   "main": "",
   "scripts": {
+    "commit": "git-cz",
     "postinstall": "node tools/init",
     "lint": "eslint --fix . --ext .js --max-warnings 0",
     "test": "jest --coverage",
@@ -26,10 +27,23 @@
       "pre-commit": "pretty-quick --staged"
     }
   },
-  "dependencies": {
-    "colors": "^1.4.0"
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {},
   "devDependencies": {
+    "@commitlint/cli": "^9.1.2",
+    "@commitlint/config-conventional": "^9.1.2",
+    "colors": "^1.4.0",
+    "commitizen": "^4.2.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.9.0",
     "eslint-config-thedaviddias": "0.0.2",
     "husky": "^4.3.0",
@@ -41,7 +55,7 @@
     "shelljs": "^0.8.4"
   },
   "engines": {
-    "node": ">=12.10",
+    "node": ">=10",
     "npm": ">=5",
     "yarn": ">=1"
   },

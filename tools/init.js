@@ -30,10 +30,12 @@ const rmFiles = [
 const renameFiles = []
 
 const modifyFiles = [
+  "README",
   "LICENSE",
   "package.json",
   ".github/.funding.yml",
-  ".github/.dependabot.yml"
+  ".github/.dependabot.yml",
+  ".all-contributorsrc"
 ]
 
 var questions = [
@@ -78,19 +80,23 @@ var questions = [
 
 ]
 
-inquirer
-  .prompt(questions)
-  .then(answers => {
-    const projectname = answers.projectname ? libraryNameSuggested() : answers.reponame
-    setupLibrary(projectname, answers.username)
-  })
-  .catch(error => {
-    if (error) {
-      console.log(colors.red("Sorry, there was an error building the workspace :("))
-      removeItems()
-      process.exit(1)
-    }
-  })
+if (process.env.CI == null) {
+  inquirer
+    .prompt(questions)
+    .then(answers => {
+      const projectname = answers.projectname ? libraryNameSuggested() : answers.reponame
+      setupLibrary(projectname, answers.username)
+    })
+    .catch(error => {
+      if (error) {
+        console.log(colors.red("Sorry, there was an error building the workspace :("))
+        removeItems()
+        process.exit(1)
+      }
+    })
+} else {
+  process.exit(0)
+}
 
 /**
  * The library name is suggested by looking at the directory name of the
@@ -165,7 +171,7 @@ function modifyContents(projectName, userfull, username, useremail) {
   try {
     const changes = replace.sync({
       files,
-      from: [/--projectname--/g, /--userfull--/g, /--username--/g, /--useremail--/g],
+      from: [/--repo--/g, /--userfull--/g, /--owner--/g, /--useremail--/g],
       to: [projectName, userfull, username, useremail]
     })
     console.log(colors.yellow(modifyFiles.join("\n")))
@@ -187,7 +193,7 @@ function renameItems(projectName) {
   renameFiles.forEach(function (files) {
     // Files[0] is the current filename
     // Files[1] is the new name
-    let newFilename = files[1].replace(/--projectname--/g, projectName)
+    let newFilename = files[1].replace(/--repo--/g, projectName)
     mv(
       path.resolve(__dirname, "..", files[0]),
       path.resolve(__dirname, "..", newFilename)
@@ -214,8 +220,6 @@ function finalize() {
   let jsonPackage = path.resolve(__dirname, "..", "package.json")
   const pkg = JSON.parse(readFileSync(jsonPackage))
 
-  console.log('pkg', pkg)
-
   // Note: Add items to remove from the package file here
   delete pkg.scripts.postinstall
 
@@ -231,4 +235,6 @@ function finalize() {
   console.log(colors.green("Git hooks set up"))
 
   console.log("\n")
+
+  console.log(colors.yellow("Don't forget to uninstall the following packages: yarn remove inquirer replace-in-file colors shelljs"))
 }
