@@ -8,13 +8,21 @@ on:
     types: [semantic-release] # allow to trigger the release manually
 
 jobs:
-  release:
-    name: Release
+  prepare:
+    name: Prepare release
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [12.x]
+    if: "! contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - run: echo "${{ github.event.head_commit.message }}"
+
+  release:
+    needs: prepare
+    name: Release
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -27,7 +35,7 @@ jobs:
 
       - name: Install dependencies and run tests
         run: |
-          yarn install
+          yarn install --frozen-lockfile --silent --ignore-engines --non-interactive
           yarn test
 
       ## add your build
