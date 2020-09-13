@@ -1,0 +1,9 @@
+{
+  "projectName": "--repo--",
+  "projectOwner": "--owner--",
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": true,
+  "skipCi": "true",
+  "contributors": []
+}
